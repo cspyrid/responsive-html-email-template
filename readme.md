@@ -1,37 +1,32 @@
-# Really Simple Responsive HTML Email Template
+# Trivia 25ης Μαρτίου (School LAN Edition)
 
-Sometimes all you want is a really simple HTML email template. Here it is.
+Web εφαρμογή trivia για ταυτόχρονο παιχνίδι ανά τμήμα, με 3 ομάδες ανά τμήμα, live scoreboard και τελική κλήρωση με αποδεικτικό διαφάνειας.
 
-Preview: http://leemunroe.github.io/responsive-html-email-template/email.html
+## Γρήγορη εκκίνηση
+1. `cp .env.example .env`
+2. `npm install`
+3. `npm run migrate`
+4. `npm run seed`
+5. `npm start`
+6. Άνοιξε `http://localhost:3000`
 
-### Sending emails using a marketing service like Campaign Monitor or Mailchimp?
+## Docker
+`docker compose up --build`
 
-Use the template as is. They'll put the CSS inline for you when you put together your campaign.
+## Windows/Linux σε σχολικό PC
+- Εγκατάσταση Node.js 20 LTS και Git.
+- Άνοιγμα τερματικού στον φάκελο έργου.
+- Εκτέλεση των βημάτων «Γρήγορη εκκίνηση».
+- Σε LAN, μοιράζεις το URL `http://IP_SERVER:3000`.
 
+## Backup / Restore ΒΔ
+- Backup: αντιγραφή του αρχείου `data/app.db` (ιδανικά όταν η εφαρμογή είναι κλειστή).
+- Restore: αντικατάσταση `data/app.db` με το backup.
 
-### Sending emails directly from your app or using a developer service like Mailgun?
+## Scripts
+- `npm run migrate` : SQL schema.
+- `npm run seed` : εισαγωγή 40+ ερωτήσεων από JSON.
+- `npm test` : tests scoring/lottery logic.
 
-For an API like [Mailgun](http://www.mailgun.com)  you need to put the CSS inline. You can use [Premailer](http://premailer.dialect.ca/) to do this automatically.
-
-* Copy all of email.html
-* Paste the HTML as the source into Premailer
-* Copy the HTML results and use them in your email view/template
-
-Note that some services may allow you to opt into CSS inlining, such as
-[Mandrill](http://help.mandrill.com/entries/24460141-Does-Mandrill-inline-CSS-automatically-).
-
-### Tried and tested
-
-Tested on all major email clients. Mobile, desktop and web. 
-
-<img src="http://i.imgur.com/TtYvCTr.jpg" alt="Email preview" width="800">
-
-Hat tip to Zurb's [Ink](http://zurb.com/ink/) for their awesome collection of email templates, which this was adapted from.
-
-### More HTML email resources
-
-Another few open-source resources you might find useful:
-
-* [Transactional HTML Email Templates](https://github.com/mailgun/transactional-email-templates)
-* [Grunt.js Email Design Workflow](https://github.com/leemunroe/grunt-email-design)
-* [Open-Source Email Template Project](https://github.com/sendwithus/templates)
+## Σύντομες πηγές ερωτήσεων
+Οι αναφορές αποθηκεύονται στο `source_ref` κάθε ερώτησης (σχολικά βιβλία Ιστορίας, ΥΠΑΙΘ, εγκυκλοπαιδικές αναφορές για Ναβαρίνο/1821).
