@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Trivia 25ης Μαρτίου</title>
+  <style>
+    body{font-family:Arial,sans-serif;margin:0;background:#f4f7ff;color:#102a43}
+    .wrap{max-width:980px;margin:0 auto;padding:1rem}
+    .card{background:#fff;padding:1rem;border-radius:12px;margin-bottom:1rem;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+    button,input,select{font-size:1.1rem;padding:.6rem;border-radius:8px}
+    .choices button{display:block;width:100%;margin:.3rem 0}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🇬🇷 Trivia Εθνικής Εορτής 25ης Μαρτίου</h1>
+  <div class="card">
+    <h2>Host - Νέα συνεδρία</h2>
+    <label>Τάξη <select id="grade"><option>Α</option><option>Β</option><option>Γ</option></select></label>
+    <label>Τμήμα <select id="section"></select></label>
+    <div id="groups"></div>
+    <button id="create">Δημιουργία συνεδρίας</button>
+    <pre id="hostOut"></pre>
+  </div>
+
+  <div class="card">
+    <h2>Player - Συμμετοχή</h2>
+    <input id="sessionCode" placeholder="Κωδικός συνεδρίας" />
+    <button id="load">Φόρτωση</button>
+    <div id="playerArea"></div>
+  </div>
+
+  <div class="card">
+    <h2>Admin - Κλήρωση</h2>
+    <input id="adminPass" type="password" placeholder="Κωδικός admin" />
+    <button id="draw">Κλήρωση (Κανόνας A)</button>
+    <pre id="drawOut"></pre>
+  </div>
+</div>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  for(let i=1;i<=8;i++) section.innerHTML += `<option>${i}</option>`;
+  for(let i=1;i<=3;i++) groups.innerHTML += `<p>Ομάδα ${i}: <input id='n${i}' placeholder='Όνομα (προαιρετικό)'> <input id='c${i}' type='number' value='5' min='1' style='width:90px'></p>`;
+
+  create.onclick = async () => {
+    const payload = { grade: grade.value, section: Number(section.value), groups:[1,2,3].map(i=>({name:document.getElementById('n'+i).value||undefined, player_count:Number(document.getElementById('c'+i).value)})) };
+    const r = await fetch('/api/host/sessions',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payload)});
+    hostOut.textContent = JSON.stringify(await r.json(),null,2);
+  };
+
+  load.onclick = async () => {
+    const code = sessionCode.value.trim().toUpperCase();
+    const r = await fetch(`/api/sessions/${code}/state`);
+    const data = await r.json();
+    if(data.error){playerArea.textContent=data.error;return;}
+    playerArea.innerHTML = `<p>Τμήμα ${data.session.grade}${data.session.section}</p><p>Scoreboard: ${data.scoreboard.map(s=>`${s.name}:${s.score}`).join(' | ')}</p>`;
+  };
+
+  draw.onclick = async () => {
+    const r=await fetch('/api/admin/lottery/run',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({password:adminPass.value,rule_type:'A'})});
+    drawOut.textContent = JSON.stringify(await r.json(),null,2);
+  };
+
+  const socket = io();
+  socket.on('scoreboard:update',(data)=>{console.log('scoreboard',data);});
+</script>
+</body>
+</html>

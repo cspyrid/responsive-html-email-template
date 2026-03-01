@@ -1,0 +1,15 @@
+services:
+  trivia:
+    image: node:20-alpine
+    working_dir: /app
+    volumes:
+      - ./:/app
+    command: sh -c "npm install && npm run migrate && npm run seed && npm start"
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - DB_PATH=./data/app.db
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-change_me}
+      - QUESTION_TIME_LIMIT_SEC=${QUESTION_TIME_LIMIT_SEC:-25}
+      - POINTS_CORRECT=${POINTS_CORRECT:-1}
